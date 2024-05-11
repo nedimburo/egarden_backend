@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.egardenrestapi.users.entities.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,29 +20,28 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.egardenrestapi.dto.AddSubscriptionDto;
-import com.example.egardenrestapi.dto.AddWorkerDto;
-import com.example.egardenrestapi.dto.CardInformationDto;
-import com.example.egardenrestapi.dto.LoginDto;
-import com.example.egardenrestapi.dto.LoginResponseDto;
-import com.example.egardenrestapi.dto.RegisterDto;
-import com.example.egardenrestapi.dto.RequestDto;
-import com.example.egardenrestapi.dto.RequestIdDto;
-import com.example.egardenrestapi.dto.RequestResponseDto;
-import com.example.egardenrestapi.dto.UserProfileDto;
-import com.example.egardenrestapi.dto.UsernameRequestDto;
-import com.example.egardenrestapi.dto.UsersRequestDto;
-import com.example.egardenrestapi.dto.WorkerResponseDto;
-import com.example.egardenrestapi.entity.CardInformation;
-import com.example.egardenrestapi.entity.Request;
-import com.example.egardenrestapi.entity.Subscription;
-import com.example.egardenrestapi.entity.User;
-import com.example.egardenrestapi.entity.Worker;
-import com.example.egardenrestapi.repository.CardInformationRepository;
-import com.example.egardenrestapi.repository.RequestRepository;
-import com.example.egardenrestapi.repository.SubscriptionRepository;
-import com.example.egardenrestapi.repository.UserRepository;
-import com.example.egardenrestapi.repository.WorkerRepository;
+import com.example.egardenrestapi.subscriptions.payloads.AddSubscriptionDto;
+import com.example.egardenrestapi.workers.payloads.AddWorkerDto;
+import com.example.egardenrestapi.cardInformations.payloads.CardInformationDto;
+import com.example.egardenrestapi.users.payloads.LoginDto;
+import com.example.egardenrestapi.users.payloads.LoginResponseDto;
+import com.example.egardenrestapi.users.payloads.RegisterDto;
+import com.example.egardenrestapi.requests.payloads.RequestDto;
+import com.example.egardenrestapi.requests.payloads.RequestIdDto;
+import com.example.egardenrestapi.requests.payloads.RequestResponseDto;
+import com.example.egardenrestapi.users.payloads.UserProfileDto;
+import com.example.egardenrestapi.requests.payloads.UsernameRequestDto;
+import com.example.egardenrestapi.requests.payloads.UsersRequestDto;
+import com.example.egardenrestapi.workers.payloads.WorkerResponseDto;
+import com.example.egardenrestapi.cardInformations.entities.CardInformationEntity;
+import com.example.egardenrestapi.requests.entities.RequestEntity;
+import com.example.egardenrestapi.subscriptions.entities.SubscriptionEntity;
+import com.example.egardenrestapi.workers.entities.WorkerEntity;
+import com.example.egardenrestapi.cardInformations.repositories.CardInformationRepository;
+import com.example.egardenrestapi.requests.repositories.RequestRepository;
+import com.example.egardenrestapi.subscriptions.repositories.SubscriptionRepository;
+import com.example.egardenrestapi.users.repositories.UserRepository;
+import com.example.egardenrestapi.workers.repositories.WorkerRepository;
 
 @RestController
 @RequestMapping("/api")
@@ -76,12 +76,12 @@ public class MainController {
 					.authenticate(new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword()));
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 			//
-			User user=userRepository.findByUsernameOrEmail(loginDto.getEmail(), loginDto.getEmail());
-			CardInformation cardInformation=cardInformationRepository.findByUserId(user.getId());
+			UserEntity userEntity =userRepository.findByUsernameOrEmail(loginDto.getEmail(), loginDto.getEmail());
+			CardInformationEntity cardInformationEntity =cardInformationRepository.findByUserEntityId(userEntity.getId());
 			responseDto.setMessage("User login successfully.");
-			responseDto.setUsername(user.getUsername());
-			responseDto.setRole(user.getRole());
-			if(cardInformation!=null) {
+			responseDto.setUsername(userEntity.getUsername());
+			responseDto.setRole(userEntity.getRole());
+			if(cardInformationEntity !=null) {
 				responseDto.setHasCard(true);
 			}
 			else {
@@ -107,16 +107,16 @@ public class MainController {
 	    if (rawPassword == null || rawPassword.isEmpty()) {
 	        return new ResponseEntity<>("Password cannot be null or empty.", HttpStatus.BAD_REQUEST);
 	    }
-		User user=new User();
-		user.setFirstName(registerDto.getFirstName());
-		user.setLastName(registerDto.getLastName());
-		user.setEmail(registerDto.getEmail());
-		user.setUsername(registerDto.getUsername());
-		user.setGender(registerDto.getGender());
-		user.setBirthDate(registerDto.getBirthDate());
-		user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
-		user.setRole("ROLE_USER");
-		userRepository.save(user);
+		UserEntity userEntity =new UserEntity();
+		userEntity.setFirstName(registerDto.getFirstName());
+		userEntity.setLastName(registerDto.getLastName());
+		userEntity.setEmail(registerDto.getEmail());
+		userEntity.setUsername(registerDto.getUsername());
+		userEntity.setGender(registerDto.getGender());
+		userEntity.setBirthDate(registerDto.getBirthDate());
+		userEntity.setPassword(passwordEncoder.encode(registerDto.getPassword()));
+		userEntity.setRole("ROLE_USER");
+		userRepository.save(userEntity);
 		return new ResponseEntity<>("User is registered successfully!", HttpStatus.OK);
 	}
 	
@@ -135,23 +135,23 @@ public class MainController {
 			if (cardInformationDto.getExpirationDate()==null) {
 				return new ResponseEntity<>("Cards expiration date cannot be null.", HttpStatus.BAD_REQUEST);
 			}
-			User user=userRepository.findByUsernameOrEmail(cardInformationDto.getUsername(), cardInformationDto.getUsername());
-			CardInformation existingCardInformation=cardInformationRepository.findByUserId(user.getId());
-			if(existingCardInformation!=null) {
-				existingCardInformation.setCardNumber(cardInformationDto.getCardNumber());
-				existingCardInformation.setPinCode(cardInformationDto.getPinCode());
-				existingCardInformation.setThreeDigitNumber(cardInformationDto.getThreeDigitNumber());
-				existingCardInformation.setExpirationDate(cardInformationDto.getExpirationDate());
-				cardInformationRepository.save(existingCardInformation);
+			UserEntity userEntity =userRepository.findByUsernameOrEmail(cardInformationDto.getUsername(), cardInformationDto.getUsername());
+			CardInformationEntity existingCardInformationEntity =cardInformationRepository.findByUserEntityId(userEntity.getId());
+			if(existingCardInformationEntity !=null) {
+				existingCardInformationEntity.setCardNumber(cardInformationDto.getCardNumber());
+				existingCardInformationEntity.setPinCode(cardInformationDto.getPinCode());
+				existingCardInformationEntity.setThreeDigitNumber(cardInformationDto.getThreeDigitNumber());
+				existingCardInformationEntity.setExpirationDate(cardInformationDto.getExpirationDate());
+				cardInformationRepository.save(existingCardInformationEntity);
 				return new ResponseEntity<>("Card Information has been updated.", HttpStatus.OK);
 			}
-			CardInformation cardInformation=new CardInformation();
-			cardInformation.setCardNumber(cardInformationDto.getCardNumber());
-			cardInformation.setPinCode(cardInformationDto.getPinCode());
-			cardInformation.setThreeDigitNumber(cardInformationDto.getThreeDigitNumber());
-			cardInformation.setExpirationDate(cardInformationDto.getExpirationDate());
-			cardInformation.setUser(user);
-			cardInformationRepository.save(cardInformation);
+			CardInformationEntity cardInformationEntity =new CardInformationEntity();
+			cardInformationEntity.setCardNumber(cardInformationDto.getCardNumber());
+			cardInformationEntity.setPinCode(cardInformationDto.getPinCode());
+			cardInformationEntity.setThreeDigitNumber(cardInformationDto.getThreeDigitNumber());
+			cardInformationEntity.setExpirationDate(cardInformationDto.getExpirationDate());
+			cardInformationEntity.setUserEntity(userEntity);
+			cardInformationRepository.save(cardInformationEntity);
 			return new ResponseEntity<>("Credit card information is successfully added.", HttpStatus.OK);
 		}catch(Exception e) {
 			return new ResponseEntity<>("Credit card information has not been saved.", HttpStatus.BAD_REQUEST);
@@ -161,16 +161,16 @@ public class MainController {
 	@PostMapping("/user-profile")
     public ResponseEntity<UserProfileDto> handleUsernameRequest(@RequestBody UsernameRequestDto usernameRequestDto) {
         String username = usernameRequestDto.getUsername();
-        User user=userRepository.findByUsernameOrEmail(username, username);
-        CardInformation cardInformation=cardInformationRepository.findByUserId(user.getId());
+        UserEntity userEntity =userRepository.findByUsernameOrEmail(username, username);
+        CardInformationEntity cardInformationEntity =cardInformationRepository.findByUserEntityId(userEntity.getId());
         UserProfileDto userProfileDto=new UserProfileDto();
-        userProfileDto.setFirstName(user.getFirstName());
-        userProfileDto.setLastName(user.getLastName());
-        userProfileDto.setEmail(user.getEmail());
-        userProfileDto.setUsername(user.getUsername());
-        userProfileDto.setGender(user.getGender());
-        userProfileDto.setBirthDate(user.getBirthDate());
-        if (cardInformation!=null) {
+        userProfileDto.setFirstName(userEntity.getFirstName());
+        userProfileDto.setLastName(userEntity.getLastName());
+        userProfileDto.setEmail(userEntity.getEmail());
+        userProfileDto.setUsername(userEntity.getUsername());
+        userProfileDto.setGender(userEntity.getGender());
+        userProfileDto.setBirthDate(userEntity.getBirthDate());
+        if (cardInformationEntity !=null) {
         	userProfileDto.setHasCard(true);
         }
         else {
@@ -181,25 +181,25 @@ public class MainController {
 	
 	@PostMapping("/add-subscription")
 	public ResponseEntity<?> addChoseSubscription(@RequestBody AddSubscriptionDto addSubscriptionDto){
-		User user=userRepository.findByUsernameOrEmail(addSubscriptionDto.getUsername(), addSubscriptionDto.getUsername());
-		Subscription existingSubscription=subscriptionRepository.findByUserId(user.getId());
-		if (existingSubscription!=null) {
-			existingSubscription.setSubscriptionName(addSubscriptionDto.getSubscriptionName());
-			subscriptionRepository.save(existingSubscription);
+		UserEntity userEntity =userRepository.findByUsernameOrEmail(addSubscriptionDto.getUsername(), addSubscriptionDto.getUsername());
+		SubscriptionEntity existingSubscriptionEntity =subscriptionRepository.findByUserId(userEntity.getId());
+		if (existingSubscriptionEntity !=null) {
+			existingSubscriptionEntity.setSubscriptionName(addSubscriptionDto.getSubscriptionName());
+			subscriptionRepository.save(existingSubscriptionEntity);
 			return new ResponseEntity<>("Subscription successfully updated.", HttpStatus.OK);
 		}
-		Subscription subscription=new Subscription();
-		subscription.setSubscriptionName(addSubscriptionDto.getSubscriptionName());
-		subscription.setUser(user);
-		subscriptionRepository.save(subscription);
+		SubscriptionEntity subscriptionEntity =new SubscriptionEntity();
+		subscriptionEntity.setSubscriptionName(addSubscriptionDto.getSubscriptionName());
+		subscriptionEntity.setUser(userEntity);
+		subscriptionRepository.save(subscriptionEntity);
 		return new ResponseEntity<>("Subscription successfully added.", HttpStatus.OK);
 	}
 	
 	@PostMapping("/cancel-subscription")
 	public ResponseEntity<?> cancelSubscription(@RequestBody UsernameRequestDto usernameRequestDto){
-		User user=userRepository.findByUsernameOrEmail(usernameRequestDto.getUsername(), usernameRequestDto.getUsername());
-		Subscription subscription=subscriptionRepository.findByUserId(user.getId());
-		subscriptionRepository.deleteById(subscription.getId());
+		UserEntity userEntity =userRepository.findByUsernameOrEmail(usernameRequestDto.getUsername(), usernameRequestDto.getUsername());
+		SubscriptionEntity subscriptionEntity =subscriptionRepository.findByUserId(userEntity.getId());
+		subscriptionRepository.deleteById(subscriptionEntity.getId());
 		return new ResponseEntity<>("Subscription successfully canceled.", HttpStatus.OK);
 	}
 	
@@ -214,64 +214,64 @@ public class MainController {
 		if (requestDto.getCountry()==null || requestDto.getCountry().isEmpty()) {
 			return new ResponseEntity<>("Country cannot be null.", HttpStatus.BAD_REQUEST);
 		}
-		User user=userRepository.findByUsernameOrEmail(requestDto.getUsername(), requestDto.getUsername());
-		Request request=new Request();
-		request.setChosenMaintenance(requestDto.getChosenMaintenance());
-		request.setChosenDecoration(requestDto.getChosenDecoration());
-		request.setChosenLayout(requestDto.getChosenLayout());
-		request.setPaymentMethod(requestDto.getPaymentMethod());
-		request.setAllowAgency(requestDto.getAllowAgency());
-		request.setPlannedBudget(requestDto.getPlannedBudget());
-		request.setPrice(requestDto.getPrice());
-		request.setStatus("PENDING");
-		request.setCreationDate(LocalDate.now());
-		request.setAddress(requestDto.getAddress());
-		request.setCity(requestDto.getCity());
-		request.setCountry(requestDto.getCountry());
-		request.setUser(user);
-		requestRepository.save(request);
+		UserEntity userEntity =userRepository.findByUsernameOrEmail(requestDto.getUsername(), requestDto.getUsername());
+		RequestEntity requestEntity =new RequestEntity();
+		requestEntity.setChosenMaintenance(requestDto.getChosenMaintenance());
+		requestEntity.setChosenDecoration(requestDto.getChosenDecoration());
+		requestEntity.setChosenLayout(requestDto.getChosenLayout());
+		requestEntity.setPaymentMethod(requestDto.getPaymentMethod());
+		requestEntity.setAllowAgency(requestDto.getAllowAgency());
+		requestEntity.setPlannedBudget(requestDto.getPlannedBudget());
+		requestEntity.setPrice(requestDto.getPrice());
+		requestEntity.setStatus("PENDING");
+		requestEntity.setCreationDate(LocalDate.now());
+		requestEntity.setAddress(requestDto.getAddress());
+		requestEntity.setCity(requestDto.getCity());
+		requestEntity.setCountry(requestDto.getCountry());
+		requestEntity.setUser(userEntity);
+		requestRepository.save(requestEntity);
 		return new ResponseEntity<>("Request has been successfully made.", HttpStatus.OK);
 	}
 	
 	@GetMapping("/get-all-requests")
 	public ResponseEntity<List<RequestResponseDto>> getAllRequestsForAdmin(){
-		List<Request> allRequests=requestRepository.findAll();
+		List<RequestEntity> allRequestEntities =requestRepository.findAll();
 		List<RequestResponseDto> allRequestsResponse=new ArrayList<>();
-		for (int i=0; i<allRequests.size(); i++) {
-			if(allRequests.get(i).getStatus().equals("PENDING")) {
+		for (int i = 0; i< allRequestEntities.size(); i++) {
+			if(allRequestEntities.get(i).getStatus().equals("PENDING")) {
 				RequestResponseDto requestResponseDto=new RequestResponseDto();
-				requestResponseDto.setId(allRequests.get(i).getId());
-				if (allRequests.get(i).getChosenMaintenance()==null) {
+				requestResponseDto.setId(allRequestEntities.get(i).getId());
+				if (allRequestEntities.get(i).getChosenMaintenance()==null) {
 					requestResponseDto.setChosenMaintenance("NOT SELECTED");
 				}
 				else {
-					requestResponseDto.setChosenMaintenance(allRequests.get(i).getChosenMaintenance());
+					requestResponseDto.setChosenMaintenance(allRequestEntities.get(i).getChosenMaintenance());
 				}
-				if (allRequests.get(i).getChosenDecoration()==null) {
+				if (allRequestEntities.get(i).getChosenDecoration()==null) {
 					requestResponseDto.setChosenDecoration("NOT SELECTED");
 				}
 				else {
-					requestResponseDto.setChosenDecoration(allRequests.get(i).getChosenDecoration());
+					requestResponseDto.setChosenDecoration(allRequestEntities.get(i).getChosenDecoration());
 				}
-				if (allRequests.get(i).getChosenLayout()==null) {
+				if (allRequestEntities.get(i).getChosenLayout()==null) {
 					requestResponseDto.setChosenLayout("NOT SELECTED");
 				}
 				else {
-					requestResponseDto.setChosenLayout(allRequests.get(i).getChosenLayout());
+					requestResponseDto.setChosenLayout(allRequestEntities.get(i).getChosenLayout());
 				}
-				requestResponseDto.setPaymentMethod(allRequests.get(i).getPaymentMethod());
-				requestResponseDto.setAllowAgency(allRequests.get(i).getAllowAgency());
-				requestResponseDto.setPlannedBudget(allRequests.get(i).getPlannedBudget());
-				requestResponseDto.setPrice(allRequests.get(i).getPrice());
-				requestResponseDto.setStatus(allRequests.get(i).getStatus());
-				requestResponseDto.setCreationDate(allRequests.get(i).getCreationDate());
-				requestResponseDto.setUsername(allRequests.get(i).getUser().getUsername());		
-				requestResponseDto.setEmail(allRequests.get(i).getUser().getEmail());
-				requestResponseDto.setFirstName(allRequests.get(i).getUser().getFirstName());
-				requestResponseDto.setLastName(allRequests.get(i).getUser().getLastName());
-				requestResponseDto.setAddress(allRequests.get(i).getAddress());
-				requestResponseDto.setCity(allRequests.get(i).getCity());
-				requestResponseDto.setCountry(allRequests.get(i).getCountry());
+				requestResponseDto.setPaymentMethod(allRequestEntities.get(i).getPaymentMethod());
+				requestResponseDto.setAllowAgency(allRequestEntities.get(i).getAllowAgency());
+				requestResponseDto.setPlannedBudget(allRequestEntities.get(i).getPlannedBudget());
+				requestResponseDto.setPrice(allRequestEntities.get(i).getPrice());
+				requestResponseDto.setStatus(allRequestEntities.get(i).getStatus());
+				requestResponseDto.setCreationDate(allRequestEntities.get(i).getCreationDate());
+				requestResponseDto.setUsername(allRequestEntities.get(i).getUser().getUsername());
+				requestResponseDto.setEmail(allRequestEntities.get(i).getUser().getEmail());
+				requestResponseDto.setFirstName(allRequestEntities.get(i).getUser().getFirstName());
+				requestResponseDto.setLastName(allRequestEntities.get(i).getUser().getLastName());
+				requestResponseDto.setAddress(allRequestEntities.get(i).getAddress());
+				requestResponseDto.setCity(allRequestEntities.get(i).getCity());
+				requestResponseDto.setCountry(allRequestEntities.get(i).getCountry());
 				allRequestsResponse.add(requestResponseDto);
 			}
 		}
@@ -280,54 +280,54 @@ public class MainController {
 	
 	@PostMapping("/approve-request")
 	public ResponseEntity<?> approveRequest(@RequestBody RequestIdDto requestIdDto){
-		Request request=requestRepository.findById(requestIdDto.getRequestId()).orElse(null);
-		request.setStatus("APPROVED");
-		requestRepository.save(request);
+		RequestEntity requestEntity =requestRepository.findById(requestIdDto.getRequestId()).orElse(null);
+		requestEntity.setStatus("APPROVED");
+		requestRepository.save(requestEntity);
 		return new ResponseEntity<>("Request has been successfully approved.", HttpStatus.OK);
 	}
 	
 	@PostMapping("/deny-request")
 	public ResponseEntity<?> denyRequest(@RequestBody RequestIdDto requestIdDto){
-		Request request=requestRepository.findById(requestIdDto.getRequestId()).orElse(null);
-		request.setStatus("DENIED");
-		requestRepository.save(request);
+		RequestEntity requestEntity =requestRepository.findById(requestIdDto.getRequestId()).orElse(null);
+		requestEntity.setStatus("DENIED");
+		requestRepository.save(requestEntity);
 		return new ResponseEntity<>("Request has been successfully denied.", HttpStatus.OK);
 	}
 	
 	@PostMapping("/get-user-requests")
 	public ResponseEntity<List<UsersRequestDto>> getUsersRequest(@RequestBody UsernameRequestDto usernameRequestDto){
-		List<Request> allRequests=requestRepository.findAll();
+		List<RequestEntity> allRequestEntities =requestRepository.findAll();
 		List<UsersRequestDto> allUsersRequest=new ArrayList<>();
-		for (int i=0; i<allRequests.size(); i++) {
-			if (allRequests.get(i).getUser().getUsername().equals(usernameRequestDto.getUsername())) {
+		for (int i = 0; i< allRequestEntities.size(); i++) {
+			if (allRequestEntities.get(i).getUser().getUsername().equals(usernameRequestDto.getUsername())) {
 				UsersRequestDto usersRequestDto=new UsersRequestDto();
-				if (allRequests.get(i).getChosenMaintenance()==null) {
+				if (allRequestEntities.get(i).getChosenMaintenance()==null) {
 					usersRequestDto.setChosenMaintenance("NOT SELECTED");
 				}
 				else {
-					usersRequestDto.setChosenMaintenance(allRequests.get(i).getChosenMaintenance());
+					usersRequestDto.setChosenMaintenance(allRequestEntities.get(i).getChosenMaintenance());
 				}
-				if (allRequests.get(i).getChosenDecoration()==null) {
+				if (allRequestEntities.get(i).getChosenDecoration()==null) {
 					usersRequestDto.setChosenDecoration("NOT SELECTED");
 				}
 				else {
-					usersRequestDto.setChosenDecoration(allRequests.get(i).getChosenDecoration());
+					usersRequestDto.setChosenDecoration(allRequestEntities.get(i).getChosenDecoration());
 				}
-				if (allRequests.get(i).getChosenLayout()==null) {
+				if (allRequestEntities.get(i).getChosenLayout()==null) {
 					usersRequestDto.setChosenLayout("NOT SELECTED");
 				}
 				else {
-					usersRequestDto.setChosenLayout(allRequests.get(i).getChosenLayout());
+					usersRequestDto.setChosenLayout(allRequestEntities.get(i).getChosenLayout());
 				}
-				usersRequestDto.setPaymentMethod(allRequests.get(i).getPaymentMethod());
-				usersRequestDto.setAllowAgency(allRequests.get(i).getAllowAgency());
-				usersRequestDto.setPlannedBudget(allRequests.get(i).getPlannedBudget());
-				usersRequestDto.setPrice(allRequests.get(i).getPrice());
-				usersRequestDto.setStatus(allRequests.get(i).getStatus());
-				usersRequestDto.setCreationDate(allRequests.get(i).getCreationDate());
-				usersRequestDto.setAddress(allRequests.get(i).getAddress());
-				usersRequestDto.setCity(allRequests.get(i).getCity());
-				usersRequestDto.setCountry(allRequests.get(i).getCountry());
+				usersRequestDto.setPaymentMethod(allRequestEntities.get(i).getPaymentMethod());
+				usersRequestDto.setAllowAgency(allRequestEntities.get(i).getAllowAgency());
+				usersRequestDto.setPlannedBudget(allRequestEntities.get(i).getPlannedBudget());
+				usersRequestDto.setPrice(allRequestEntities.get(i).getPrice());
+				usersRequestDto.setStatus(allRequestEntities.get(i).getStatus());
+				usersRequestDto.setCreationDate(allRequestEntities.get(i).getCreationDate());
+				usersRequestDto.setAddress(allRequestEntities.get(i).getAddress());
+				usersRequestDto.setCity(allRequestEntities.get(i).getCity());
+				usersRequestDto.setCountry(allRequestEntities.get(i).getCountry());
 				allUsersRequest.add(usersRequestDto);
 			}
 		}
@@ -349,23 +349,23 @@ public class MainController {
 			if(addWorkerDto.getCountry()==null || addWorkerDto.getCountry().isEmpty()) {
 				return new ResponseEntity<>("Country cannot be null or empty.", HttpStatus.BAD_REQUEST);
 			}
-			User user=userRepository.findByUsernameOrEmail(addWorkerDto.getUsername(), addWorkerDto.getUsername());
-			Worker existingWorker=workerRepository.findByUserId(user.getId());
-			if (existingWorker!=null) {
-				existingWorker.setDescription(addWorkerDto.getDescription());
-				existingWorker.setPhoneNumber(addWorkerDto.getPhoneNumber());
-				existingWorker.setCity(addWorkerDto.getCity());
-				existingWorker.setCountry(addWorkerDto.getCountry());
-				workerRepository.save(existingWorker);
+			UserEntity userEntity =userRepository.findByUsernameOrEmail(addWorkerDto.getUsername(), addWorkerDto.getUsername());
+			WorkerEntity existingWorkerEntity =workerRepository.findByUserId(userEntity.getId());
+			if (existingWorkerEntity !=null) {
+				existingWorkerEntity.setDescription(addWorkerDto.getDescription());
+				existingWorkerEntity.setPhoneNumber(addWorkerDto.getPhoneNumber());
+				existingWorkerEntity.setCity(addWorkerDto.getCity());
+				existingWorkerEntity.setCountry(addWorkerDto.getCountry());
+				workerRepository.save(existingWorkerEntity);
 				return new ResponseEntity<>("Work details have been updated.", HttpStatus.OK);
 			}
-			Worker worker=new Worker();
-			worker.setDescription(addWorkerDto.getDescription());
-			worker.setPhoneNumber(addWorkerDto.getPhoneNumber());
-			worker.setCity(addWorkerDto.getCity());
-			worker.setCountry(addWorkerDto.getCountry());
-			worker.setUser(user);
-			workerRepository.save(worker);
+			WorkerEntity workerEntity =new WorkerEntity();
+			workerEntity.setDescription(addWorkerDto.getDescription());
+			workerEntity.setPhoneNumber(addWorkerDto.getPhoneNumber());
+			workerEntity.setCity(addWorkerDto.getCity());
+			workerEntity.setCountry(addWorkerDto.getCountry());
+			workerEntity.setUser(userEntity);
+			workerRepository.save(workerEntity);
 			return new ResponseEntity<>("Work details have been successfully added.", HttpStatus.OK);
 		}catch(Exception e) {
 			return new ResponseEntity<>("Work details have not been saved.", HttpStatus.BAD_REQUEST);
@@ -374,18 +374,18 @@ public class MainController {
 	
 	@GetMapping("/get-all-workers")
 	public ResponseEntity<List<WorkerResponseDto>> getAllWorkers(){
-		List<Worker> allWorkers=workerRepository.findAll();
+		List<WorkerEntity> allWorkerEntities =workerRepository.findAll();
 		List<WorkerResponseDto> allWorkersResponse=new ArrayList<>();
-		for (int i=0; i<allWorkers.size(); i++) {
+		for (int i = 0; i< allWorkerEntities.size(); i++) {
 			WorkerResponseDto workerResponseDto=new WorkerResponseDto();
-			workerResponseDto.setFirstName(allWorkers.get(i).getUser().getFirstName());
-			workerResponseDto.setLastName(allWorkers.get(i).getUser().getLastName());
-			workerResponseDto.setEmail(allWorkers.get(i).getUser().getEmail());
-			workerResponseDto.setUsername(allWorkers.get(i).getUser().getUsername());
-			workerResponseDto.setDescription(allWorkers.get(i).getDescription());
-			workerResponseDto.setPhoneNumber(allWorkers.get(i).getPhoneNumber());
-			workerResponseDto.setCity(allWorkers.get(i).getCity());
-			workerResponseDto.setCountry(allWorkers.get(i).getCountry());
+			workerResponseDto.setFirstName(allWorkerEntities.get(i).getUser().getFirstName());
+			workerResponseDto.setLastName(allWorkerEntities.get(i).getUser().getLastName());
+			workerResponseDto.setEmail(allWorkerEntities.get(i).getUser().getEmail());
+			workerResponseDto.setUsername(allWorkerEntities.get(i).getUser().getUsername());
+			workerResponseDto.setDescription(allWorkerEntities.get(i).getDescription());
+			workerResponseDto.setPhoneNumber(allWorkerEntities.get(i).getPhoneNumber());
+			workerResponseDto.setCity(allWorkerEntities.get(i).getCity());
+			workerResponseDto.setCountry(allWorkerEntities.get(i).getCountry());
 			allWorkersResponse.add(workerResponseDto);
 		}
 		return new ResponseEntity<>(allWorkersResponse, HttpStatus.OK);
