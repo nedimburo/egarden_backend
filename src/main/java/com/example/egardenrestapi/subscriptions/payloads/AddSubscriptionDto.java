@@ -1,19 +1,16 @@
 package com.example.egardenrestapi.subscriptions.payloads;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class AddSubscriptionDto {
+
 	private String username;
-	private String subscriptionName;
-	public String getUsername() {
-		return username;
-	}
-	public void setUsername(String username) {
-		this.username = username;
-	}
-	public String getSubscriptionName() {
-		return subscriptionName;
-	}
-	public void setSubscriptionName(String subscriptionName) {
-		this.subscriptionName = subscriptionName;
-	}
-	
+	private String subscriptionType;
 }

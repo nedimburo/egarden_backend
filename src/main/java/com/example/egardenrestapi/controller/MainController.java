@@ -41,78 +41,10 @@ public class MainController {
 	private UserRepository userRepository;
 	
 	@Autowired
-	private CardInformationRepository cardInformationRepository;
-	
-	@Autowired
-	private SubscriptionRepository subscriptionRepository;
-	
-	@Autowired
 	private RequestRepository requestRepository;
 	
 	@Autowired
 	private WorkerRepository workerRepository;
-	
-	@PostMapping("/add-card-information")
-	public ResponseEntity<?> addCardInformation(@RequestBody CardInformationDto cardInformationDto){
-		try {
-			if (cardInformationDto.getCardNumber()==null || cardInformationDto.getCardNumber().isEmpty()) {
-				return new ResponseEntity<>("Card number cannot be null or empty.", HttpStatus.BAD_REQUEST);
-			}
-			if (cardInformationDto.getPinCode()==null || cardInformationDto.getPinCode().isEmpty()) {
-				return new ResponseEntity<>("Cards pin code cannot be null or empty.", HttpStatus.BAD_REQUEST);
-			}
-			if (cardInformationDto.getThreeDigitNumber()==null || cardInformationDto.getThreeDigitNumber().isEmpty() || cardInformationDto.getThreeDigitNumber().length()!=3) {
-				return new ResponseEntity<>("Three digit number cannot be null or empty and must only contain three digits.", HttpStatus.BAD_REQUEST);
-			}
-			if (cardInformationDto.getExpirationDate()==null) {
-				return new ResponseEntity<>("Cards expiration date cannot be null.", HttpStatus.BAD_REQUEST);
-			}
-			UserEntity userEntity =userRepository.findByUsernameOrEmail(cardInformationDto.getUsername(), cardInformationDto.getUsername());
-			CardInformationEntity existingCardInformationEntity =cardInformationRepository.findByUserEntityId(userEntity.getId());
-			if(existingCardInformationEntity !=null) {
-				existingCardInformationEntity.setCardNumber(cardInformationDto.getCardNumber());
-				existingCardInformationEntity.setPinCode(cardInformationDto.getPinCode());
-				existingCardInformationEntity.setThreeDigitNumber(cardInformationDto.getThreeDigitNumber());
-				existingCardInformationEntity.setExpirationDate(cardInformationDto.getExpirationDate());
-				cardInformationRepository.save(existingCardInformationEntity);
-				return new ResponseEntity<>("Card Information has been updated.", HttpStatus.OK);
-			}
-			CardInformationEntity cardInformationEntity =new CardInformationEntity();
-			cardInformationEntity.setCardNumber(cardInformationDto.getCardNumber());
-			cardInformationEntity.setPinCode(cardInformationDto.getPinCode());
-			cardInformationEntity.setThreeDigitNumber(cardInformationDto.getThreeDigitNumber());
-			cardInformationEntity.setExpirationDate(cardInformationDto.getExpirationDate());
-			cardInformationEntity.setUserEntity(userEntity);
-			cardInformationRepository.save(cardInformationEntity);
-			return new ResponseEntity<>("Credit card information is successfully added.", HttpStatus.OK);
-		}catch(Exception e) {
-			return new ResponseEntity<>("Credit card information has not been saved.", HttpStatus.BAD_REQUEST);
-		}
-	}
-	
-	@PostMapping("/add-subscription")
-	public ResponseEntity<?> addChoseSubscription(@RequestBody AddSubscriptionDto addSubscriptionDto){
-		UserEntity userEntity =userRepository.findByUsernameOrEmail(addSubscriptionDto.getUsername(), addSubscriptionDto.getUsername());
-		SubscriptionEntity existingSubscriptionEntity =subscriptionRepository.findByUserId(userEntity.getId());
-		if (existingSubscriptionEntity !=null) {
-			existingSubscriptionEntity.setSubscriptionName(addSubscriptionDto.getSubscriptionName());
-			subscriptionRepository.save(existingSubscriptionEntity);
-			return new ResponseEntity<>("Subscription successfully updated.", HttpStatus.OK);
-		}
-		SubscriptionEntity subscriptionEntity =new SubscriptionEntity();
-		subscriptionEntity.setSubscriptionName(addSubscriptionDto.getSubscriptionName());
-		subscriptionEntity.setUser(userEntity);
-		subscriptionRepository.save(subscriptionEntity);
-		return new ResponseEntity<>("Subscription successfully added.", HttpStatus.OK);
-	}
-	
-	@PostMapping("/cancel-subscription")
-	public ResponseEntity<?> cancelSubscription(@RequestBody UsernameRequestDto usernameRequestDto){
-		UserEntity userEntity =userRepository.findByUsernameOrEmail(usernameRequestDto.getUsername(), usernameRequestDto.getUsername());
-		SubscriptionEntity subscriptionEntity =subscriptionRepository.findByUserId(userEntity.getId());
-		subscriptionRepository.deleteById(subscriptionEntity.getId());
-		return new ResponseEntity<>("Subscription successfully canceled.", HttpStatus.OK);
-	}
 	
 	@PostMapping("/create-request")
 	public ResponseEntity<?> createRequest(@RequestBody RequestDto requestDto){

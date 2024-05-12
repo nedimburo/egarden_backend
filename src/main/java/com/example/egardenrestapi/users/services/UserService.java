@@ -114,4 +114,8 @@ public class UserService implements User {
 
         return new ResponseEntity<>(userProfileDto, HttpStatus.OK);
     }
+
+    public UserEntity findByUsernameOrEmail(String username, String email){
+        return repository.findByUsernameOrEmail(username, email);
+    }
 }
