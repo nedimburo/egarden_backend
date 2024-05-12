@@ -8,6 +8,7 @@ import com.example.egardenrestapi.users.entities.UserEntity;
 import com.example.egardenrestapi.users.payloads.LoginDto;
 import com.example.egardenrestapi.users.payloads.LoginResponseDto;
 import com.example.egardenrestapi.users.payloads.RegisterDto;
+import com.example.egardenrestapi.users.payloads.UserProfileDto;
 import com.example.egardenrestapi.users.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.Getter;
@@ -89,5 +90,28 @@ public class UserService implements User {
 
         repository.save(userEntity);
         return new ResponseEntity<>("User is registered successfully!", HttpStatus.OK);
+    }
+
+    @Transactional
+    public ResponseEntity<UserProfileDto> getUsersProfile(String username){
+        UserEntity userEntity = repository.findByUsernameOrEmail(username, username);
+        CardInformationEntity cardInformationEntity = cardInformationService.findByUserEntityId(userEntity.getId());
+
+        UserProfileDto userProfileDto=new UserProfileDto();
+        userProfileDto.setFirstName(userEntity.getFirstName());
+        userProfileDto.setLastName(userEntity.getLastName());
+        userProfileDto.setEmail(userEntity.getEmail());
+        userProfileDto.setUsername(userEntity.getUsername());
+        userProfileDto.setGender(userEntity.getGender());
+        userProfileDto.setBirthDate(userEntity.getBirthDate());
+
+        if (cardInformationEntity !=null) {
+            userProfileDto.setHasCard(true);
+        }
+        else {
+            userProfileDto.setHasCard(false);
+        }
+
+        return new ResponseEntity<>(userProfileDto, HttpStatus.OK);
     }
 }

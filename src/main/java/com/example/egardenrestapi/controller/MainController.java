@@ -4,17 +4,10 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.egardenrestapi.users.entities.RoleType;
 import com.example.egardenrestapi.users.entities.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,14 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.egardenrestapi.subscriptions.payloads.AddSubscriptionDto;
 import com.example.egardenrestapi.workers.payloads.AddWorkerDto;
 import com.example.egardenrestapi.cardInformations.payloads.CardInformationDto;
-import com.example.egardenrestapi.users.payloads.LoginDto;
-import com.example.egardenrestapi.users.payloads.LoginResponseDto;
-import com.example.egardenrestapi.users.payloads.RegisterDto;
 import com.example.egardenrestapi.requests.payloads.RequestDto;
 import com.example.egardenrestapi.requests.payloads.RequestIdDto;
 import com.example.egardenrestapi.requests.payloads.RequestResponseDto;
 import com.example.egardenrestapi.users.payloads.UserProfileDto;
-import com.example.egardenrestapi.requests.payloads.UsernameRequestDto;
 import com.example.egardenrestapi.requests.payloads.UsersRequestDto;
 import com.example.egardenrestapi.workers.payloads.WorkerResponseDto;
 import com.example.egardenrestapi.cardInformations.entities.CardInformationEntity;
@@ -100,27 +89,6 @@ public class MainController {
 			return new ResponseEntity<>("Credit card information has not been saved.", HttpStatus.BAD_REQUEST);
 		}
 	}
-	
-	@PostMapping("/user-profile")
-    public ResponseEntity<UserProfileDto> handleUsernameRequest(@RequestBody UsernameRequestDto usernameRequestDto) {
-        String username = usernameRequestDto.getUsername();
-        UserEntity userEntity =userRepository.findByUsernameOrEmail(username, username);
-        CardInformationEntity cardInformationEntity =cardInformationRepository.findByUserEntityId(userEntity.getId());
-        UserProfileDto userProfileDto=new UserProfileDto();
-        userProfileDto.setFirstName(userEntity.getFirstName());
-        userProfileDto.setLastName(userEntity.getLastName());
-        userProfileDto.setEmail(userEntity.getEmail());
-        userProfileDto.setUsername(userEntity.getUsername());
-        userProfileDto.setGender(userEntity.getGender());
-        userProfileDto.setBirthDate(userEntity.getBirthDate());
-        if (cardInformationEntity !=null) {
-        	userProfileDto.setHasCard(true);
-        }
-        else {
-        	userProfileDto.setHasCard(false);
-        }
-        return new ResponseEntity<>(userProfileDto, HttpStatus.OK);
-    }
 	
 	@PostMapping("/add-subscription")
 	public ResponseEntity<?> addChoseSubscription(@RequestBody AddSubscriptionDto addSubscriptionDto){
