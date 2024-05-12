@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.egardenrestapi.users.entities.RoleType;
 import com.example.egardenrestapi.users.entities.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -46,9 +47,6 @@ import com.example.egardenrestapi.workers.repositories.WorkerRepository;
 @RestController
 @RequestMapping("/api")
 public class MainController {
-
-	@Autowired
-	private AuthenticationManager authenticationManager;
 	
 	@Autowired
 	private UserRepository userRepository;
@@ -64,61 +62,6 @@ public class MainController {
 	
 	@Autowired
 	private WorkerRepository workerRepository;
-	
-	@Autowired
-	private PasswordEncoder passwordEncoder;
-	
-	@PostMapping("/login")
-	public ResponseEntity<LoginResponseDto> authenticateUser(@RequestBody LoginDto loginDto){
-		LoginResponseDto responseDto=new LoginResponseDto();
-		try {
-			Authentication authentication=authenticationManager
-					.authenticate(new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword()));
-			SecurityContextHolder.getContext().setAuthentication(authentication);
-			//
-			UserEntity userEntity =userRepository.findByUsernameOrEmail(loginDto.getEmail(), loginDto.getEmail());
-			CardInformationEntity cardInformationEntity =cardInformationRepository.findByUserEntityId(userEntity.getId());
-			responseDto.setMessage("User login successfully.");
-			responseDto.setUsername(userEntity.getUsername());
-			responseDto.setRole(userEntity.getRole());
-			if(cardInformationEntity !=null) {
-				responseDto.setHasCard(true);
-			}
-			else {
-				responseDto.setHasCard(false);
-			}
-			return new ResponseEntity<>(responseDto, HttpStatus.OK);
-		}catch(BadCredentialsException e) {
-			responseDto.setMessage("Invalid email or password");
-			return new ResponseEntity<>(responseDto, HttpStatus.UNAUTHORIZED);
-		}
-		
-	}
-	
-	@PostMapping("/register")
-	public ResponseEntity<?> registerUser(@RequestBody RegisterDto registerDto){
-		if (userRepository.existsByUsername(registerDto.getUsername())) {
-			return new ResponseEntity<>("Username is already in use.", HttpStatus.BAD_REQUEST);
-		}
-		if (userRepository.existsByEmail(registerDto.getEmail())) {
-			return new ResponseEntity<>("Email is already in use.", HttpStatus.BAD_REQUEST);
-		}
-		String rawPassword = registerDto.getPassword();
-	    if (rawPassword == null || rawPassword.isEmpty()) {
-	        return new ResponseEntity<>("Password cannot be null or empty.", HttpStatus.BAD_REQUEST);
-	    }
-		UserEntity userEntity =new UserEntity();
-		userEntity.setFirstName(registerDto.getFirstName());
-		userEntity.setLastName(registerDto.getLastName());
-		userEntity.setEmail(registerDto.getEmail());
-		userEntity.setUsername(registerDto.getUsername());
-		userEntity.setGender(registerDto.getGender());
-		userEntity.setBirthDate(registerDto.getBirthDate());
-		userEntity.setPassword(passwordEncoder.encode(registerDto.getPassword()));
-		userEntity.setRole("ROLE_USER");
-		userRepository.save(userEntity);
-		return new ResponseEntity<>("User is registered successfully!", HttpStatus.OK);
-	}
 	
 	@PostMapping("/add-card-information")
 	public ResponseEntity<?> addCardInformation(@RequestBody CardInformationDto cardInformationDto){
