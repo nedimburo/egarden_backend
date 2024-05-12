@@ -2,121 +2,66 @@ package com.example.egardenrestapi.requests.entities;
 
 import java.time.LocalDate;
 
+import com.example.egardenrestapi.requests.Request;
 import com.example.egardenrestapi.users.entities.UserEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
+@Getter
+@Setter
 @Entity
 @Table(name="requests")
-public class RequestEntity {
+@ToString(onlyExplicitlyIncluded = true, callSuper = true)
+public class RequestEntity implements Request {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer id;
-	private String chosenMaintenance;
+
+	@Column(name = "chosen_maintenance")
+	@Enumerated(EnumType.STRING)
+	private MaintenanceType chosenMaintenance;
+
+	@Column(name = "chosen_decoration")
 	private String chosenDecoration;
+
+	@Column(name = "chosen_layout")
 	private String chosenLayout;
-	private String paymentMethod;
-	private String allowAgency;
+
+	@Column(name = "payment_method")
+	@Enumerated(EnumType.STRING)
+	private PaymentMethod paymentMethod;
+
+	@Column(name = "allow_agency")
+	@Enumerated(EnumType.STRING)
+	private ConfirmationType allowAgency;
+
+	@Column(name = "planned_budget")
 	private float plannedBudget;
+
+	@Column(name = "price")
 	private float price;
-	private String status;
+
+	@Column(name = "status")
+	@Enumerated(EnumType.STRING)
+	private StatusType status;
+
+	@Column(name = "creation_date")
 	private LocalDate creationDate;
+
+	@Column(name = "city")
 	private String city;
+
+	@Column(name = "address")
 	private String address;
+
+	@Column(name = "country")
 	private String country;
+
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="user_id")
 	private UserEntity userEntity;
-	public Integer getId() {
-		return id;
-	}
-	public void setId(Integer id) {
-		this.id = id;
-	}
-	public String getChosenMaintenance() {
-		return chosenMaintenance;
-	}
-	public void setChosenMaintenance(String chosenMaintenance) {
-		this.chosenMaintenance = chosenMaintenance;
-	}
-	public String getChosenDecoration() {
-		return chosenDecoration;
-	}
-	public void setChosenDecoration(String chosenDecoration) {
-		this.chosenDecoration = chosenDecoration;
-	}
-	public String getChosenLayout() {
-		return chosenLayout;
-	}
-	public void setChosenLayout(String chosenLayout) {
-		this.chosenLayout = chosenLayout;
-	}
-	public String getPaymentMethod() {
-		return paymentMethod;
-	}
-	public void setPaymentMethod(String paymentMethod) {
-		this.paymentMethod = paymentMethod;
-	}
-	public String getAllowAgency() {
-		return allowAgency;
-	}
-	public void setAllowAgency(String allowAgency) {
-		this.allowAgency = allowAgency;
-	}
-	public float getPlannedBudget() {
-		return plannedBudget;
-	}
-	public void setPlannedBudget(float plannedBudget) {
-		this.plannedBudget = plannedBudget;
-	}
-	public float getPrice() {
-		return price;
-	}
-	public void setPrice(float price) {
-		this.price = price;
-	}
-	public String getStatus() {
-		return status;
-	}
-	public void setStatus(String status) {
-		this.status = status;
-	}
-	public LocalDate getCreationDate() {
-		return creationDate;
-	}
-	public void setCreationDate(LocalDate creationDate) {
-		this.creationDate = creationDate;
-	}
-	public String getCity() {
-		return city;
-	}
-	public void setCity(String city) {
-		this.city = city;
-	}
-	public String getAddress() {
-		return address;
-	}
-	public void setAddress(String address) {
-		this.address = address;
-	}
-	public String getCountry() {
-		return country;
-	}
-	public void setCountry(String country) {
-		this.country = country;
-	}
-	public UserEntity getUser() {
-		return userEntity;
-	}
-	public void setUser(UserEntity userEntity) {
-		this.userEntity = userEntity;
-	}
 
 }

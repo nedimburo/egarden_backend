@@ -2,6 +2,7 @@ package com.example.egardenrestapi.cardInformations.entities;
 
 import java.time.LocalDate;
 
+import com.example.egardenrestapi.cardInformations.CardInformation;
 import com.example.egardenrestapi.users.entities.UserEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,61 +13,35 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
+@Getter
+@Setter
 @Entity
 @Table(name="card_informations")
-public class CardInformationEntity {
+@ToString(onlyExplicitlyIncluded = true, callSuper = true)
+public class CardInformationEntity implements CardInformation {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer id;
-	@Column(nullable=false)
+
+	@Column(name = "card_number")
 	private String cardNumber;
-	@Column(nullable=false)
+
+	@Column(name = "pin_code")
 	private String pinCode;
-	@Column(nullable=false)
+
+	@Column(name = "three_digit_number")
 	private String threeDigitNumber;
-	@Column(nullable=false)
+
+	@Column(name = "expiration_date")
 	private LocalDate expirationDate;
+
 	@OneToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="user_id", referencedColumnName = "id")
 	private UserEntity userEntity;
-	
-	public Integer getId() {
-		return id;
-	}
-	public void setId(Integer id) {
-		this.id = id;
-	}
-	public String getCardNumber() {
-		return cardNumber;
-	}
-	public void setCardNumber(String cardNumber) {
-		this.cardNumber = cardNumber;
-	}
-	public String getPinCode() {
-		return pinCode;
-	}
-	public void setPinCode(String pinCode) {
-		this.pinCode = pinCode;
-	}
-	public String getThreeDigitNumber() {
-		return threeDigitNumber;
-	}
-	public void setThreeDigitNumber(String threeDigitNumber) {
-		this.threeDigitNumber = threeDigitNumber;
-	}
-	public LocalDate getExpirationDate() {
-		return expirationDate;
-	}
-	public void setExpirationDate(LocalDate expirationDate) {
-		this.expirationDate = expirationDate;
-	}
-	public UserEntity getUserEntity() {
-		return userEntity;
-	}
-	public void setUserEntity(UserEntity userEntity) {
-		this.userEntity = userEntity;
-	}
 	
 }
