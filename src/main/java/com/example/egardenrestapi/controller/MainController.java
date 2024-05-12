@@ -43,9 +43,6 @@ public class MainController {
 	@Autowired
 	private RequestRepository requestRepository;
 	
-	@Autowired
-	private WorkerRepository workerRepository;
-	
 	@PostMapping("/create-request")
 	public ResponseEntity<?> createRequest(@RequestBody RequestDto requestDto){
 		if (requestDto.getAddress()==null || requestDto.getAddress().isEmpty()) {
@@ -175,62 +172,5 @@ public class MainController {
 			}
 		}
 		return new ResponseEntity<>(allUsersRequest, HttpStatus.OK);
-	}
-	
-	@PostMapping("/sign-up-work")
-	public ResponseEntity<?> signUpForWork(@RequestBody AddWorkerDto addWorkerDto){
-		try {
-			if(addWorkerDto.getDescription()==null || addWorkerDto.getDescription().isEmpty()) {
-				return new ResponseEntity<>("Description cannot be null or empty.", HttpStatus.BAD_REQUEST);
-			}
-			if(addWorkerDto.getPhoneNumber()==null || addWorkerDto.getPhoneNumber().isEmpty()) {
-				return new ResponseEntity<>("Phone number cannot be null or empty.", HttpStatus.BAD_REQUEST);
-			}
-			if(addWorkerDto.getCity()==null || addWorkerDto.getCity().isEmpty()) {
-				return new ResponseEntity<>("City cannot be null or empty.", HttpStatus.BAD_REQUEST);
-			}
-			if(addWorkerDto.getCountry()==null || addWorkerDto.getCountry().isEmpty()) {
-				return new ResponseEntity<>("Country cannot be null or empty.", HttpStatus.BAD_REQUEST);
-			}
-			UserEntity userEntity =userRepository.findByUsernameOrEmail(addWorkerDto.getUsername(), addWorkerDto.getUsername());
-			WorkerEntity existingWorkerEntity =workerRepository.findByUserId(userEntity.getId());
-			if (existingWorkerEntity !=null) {
-				existingWorkerEntity.setDescription(addWorkerDto.getDescription());
-				existingWorkerEntity.setPhoneNumber(addWorkerDto.getPhoneNumber());
-				existingWorkerEntity.setCity(addWorkerDto.getCity());
-				existingWorkerEntity.setCountry(addWorkerDto.getCountry());
-				workerRepository.save(existingWorkerEntity);
-				return new ResponseEntity<>("Work details have been updated.", HttpStatus.OK);
-			}
-			WorkerEntity workerEntity =new WorkerEntity();
-			workerEntity.setDescription(addWorkerDto.getDescription());
-			workerEntity.setPhoneNumber(addWorkerDto.getPhoneNumber());
-			workerEntity.setCity(addWorkerDto.getCity());
-			workerEntity.setCountry(addWorkerDto.getCountry());
-			workerEntity.setUser(userEntity);
-			workerRepository.save(workerEntity);
-			return new ResponseEntity<>("Work details have been successfully added.", HttpStatus.OK);
-		}catch(Exception e) {
-			return new ResponseEntity<>("Work details have not been saved.", HttpStatus.BAD_REQUEST);
-		}
-	}
-	
-	@GetMapping("/get-all-workers")
-	public ResponseEntity<List<WorkerResponseDto>> getAllWorkers(){
-		List<WorkerEntity> allWorkerEntities =workerRepository.findAll();
-		List<WorkerResponseDto> allWorkersResponse=new ArrayList<>();
-		for (int i = 0; i< allWorkerEntities.size(); i++) {
-			WorkerResponseDto workerResponseDto=new WorkerResponseDto();
-			workerResponseDto.setFirstName(allWorkerEntities.get(i).getUser().getFirstName());
-			workerResponseDto.setLastName(allWorkerEntities.get(i).getUser().getLastName());
-			workerResponseDto.setEmail(allWorkerEntities.get(i).getUser().getEmail());
-			workerResponseDto.setUsername(allWorkerEntities.get(i).getUser().getUsername());
-			workerResponseDto.setDescription(allWorkerEntities.get(i).getDescription());
-			workerResponseDto.setPhoneNumber(allWorkerEntities.get(i).getPhoneNumber());
-			workerResponseDto.setCity(allWorkerEntities.get(i).getCity());
-			workerResponseDto.setCountry(allWorkerEntities.get(i).getCountry());
-			allWorkersResponse.add(workerResponseDto);
-		}
-		return new ResponseEntity<>(allWorkersResponse, HttpStatus.OK);
 	}
 }
