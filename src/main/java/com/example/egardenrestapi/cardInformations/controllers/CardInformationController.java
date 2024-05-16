@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("public/card-infomration")
-@Tags(value = {@Tag(name = "Public | Card Information"), @Tag(name = "operationIdNamePublicCardInformation")})
+@Tags(value = @Tag(name = "Public | Card Information"))
 public class CardInformationController {
 
     private final CardInformationService service;

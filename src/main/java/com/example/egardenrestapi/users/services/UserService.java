@@ -1,7 +1,5 @@
 package com.example.egardenrestapi.users.services;
 
-import com.example.egardenrestapi.cardInformations.entities.CardInformationEntity;
-import com.example.egardenrestapi.cardInformations.services.CardInformationService;
 import com.example.egardenrestapi.users.User;
 import com.example.egardenrestapi.users.entities.RoleType;
 import com.example.egardenrestapi.users.entities.UserEntity;
@@ -31,7 +29,6 @@ import org.springframework.stereotype.Service;
 public class UserService implements User {
 
     private final UserRepository repository;
-    private final CardInformationService cardInformationService;
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
 
@@ -44,17 +41,9 @@ public class UserService implements User {
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
             UserEntity userEntity = repository.findByUsernameOrEmail(loginDto.getEmail(), loginDto.getEmail());
-            CardInformationEntity cardInformationEntity = cardInformationService.findByUserEntityId(userEntity.getId());
             responseDto.setMessage("User login successfully.");
             responseDto.setUsername(userEntity.getUsername());
             responseDto.setRole(String.valueOf(userEntity.getRole()));
-
-            if(cardInformationEntity !=null) {
-                responseDto.setHasCard(true);
-            }
-            else {
-                responseDto.setHasCard(false);
-            }
 
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
         }catch(BadCredentialsException e) {
@@ -95,7 +84,6 @@ public class UserService implements User {
     @Transactional
     public ResponseEntity<UserProfileDto> getUsersProfile(String username){
         UserEntity userEntity = repository.findByUsernameOrEmail(username, username);
-        CardInformationEntity cardInformationEntity = cardInformationService.findByUserEntityId(userEntity.getId());
 
         UserProfileDto userProfileDto=new UserProfileDto();
         userProfileDto.setFirstName(userEntity.getFirstName());
@@ -104,13 +92,6 @@ public class UserService implements User {
         userProfileDto.setUsername(userEntity.getUsername());
         userProfileDto.setGender(userEntity.getGender());
         userProfileDto.setBirthDate(userEntity.getBirthDate());
-
-        if (cardInformationEntity !=null) {
-            userProfileDto.setHasCard(true);
-        }
-        else {
-            userProfileDto.setHasCard(false);
-        }
 
         return new ResponseEntity<>(userProfileDto, HttpStatus.OK);
     }

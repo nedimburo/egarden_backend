@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.example.egardenrestapi.requests.entities.RequestEntity;
 
 public interface RequestRepository extends JpaRepository<RequestEntity, Integer>{
-	List<RequestEntity> findByUserId(Integer userId);
+	List<RequestEntity> findByUserEntityId(Integer userId);
 }

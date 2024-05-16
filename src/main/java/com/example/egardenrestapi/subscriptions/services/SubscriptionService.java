@@ -27,7 +27,7 @@ public class SubscriptionService implements Subscription {
     @Transactional
     public ResponseEntity<?> addChosenSubscription(AddSubscriptionDto addSubscriptionDto){
         UserEntity userEntity = userService.findByUsernameOrEmail(addSubscriptionDto.getUsername(), addSubscriptionDto.getUsername());
-        SubscriptionEntity existingSubscriptionEntity = repository.findByUserId(userEntity.getId());
+        SubscriptionEntity existingSubscriptionEntity = repository.findByUserEntityId(userEntity.getId());
 
         if (existingSubscriptionEntity !=null) {
             existingSubscriptionEntity.setSubscriptionType(SubscriptionType.valueOf(addSubscriptionDto.getSubscriptionType()));
@@ -46,7 +46,7 @@ public class SubscriptionService implements Subscription {
     @Transactional
     public ResponseEntity<?> cancelSubscription(String username){
         UserEntity userEntity = userService.findByUsernameOrEmail(username, username);
-        SubscriptionEntity subscriptionEntity = repository.findByUserId(userEntity.getId());
+        SubscriptionEntity subscriptionEntity = repository.findByUserEntityId(userEntity.getId());
         repository.deleteById(subscriptionEntity.getId());
         return new ResponseEntity<>("Subscription successfully canceled.", HttpStatus.OK);
     }

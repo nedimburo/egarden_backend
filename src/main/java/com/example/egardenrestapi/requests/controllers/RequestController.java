@@ -19,7 +19,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("public/request")
-@Tags(value = {@Tag(name = "Public | Request"), @Tag(name = "operationIdNamePublicRequest")})
+@Tags(value = @Tag(name = "Public | Request"))
 public class RequestController {
 
     private final RequestService service;

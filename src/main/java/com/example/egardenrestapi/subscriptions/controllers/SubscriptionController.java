@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("public/subscription")
-@Tags(value = {@Tag(name = "Public | Subscription"), @Tag(name = "operationIdNamePublicSubscription")})
+@Tags(value = @Tag(name = "Public | Subscription"))
 public class SubscriptionController {
 
     private final SubscriptionService service;

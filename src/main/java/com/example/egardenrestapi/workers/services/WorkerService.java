@@ -47,7 +47,7 @@ public class WorkerService implements Worker {
             }
 
             UserEntity userEntity = userService.findByUsernameOrEmail(addWorkerDto.getUsername(), addWorkerDto.getUsername());
-            WorkerEntity existingWorkerEntity = repository.findByUserId(userEntity.getId());
+            WorkerEntity existingWorkerEntity = repository.findByUserEntityId(userEntity.getId());
 
             if (existingWorkerEntity !=null) {
                 existingWorkerEntity.setDescription(addWorkerDto.getDescription());

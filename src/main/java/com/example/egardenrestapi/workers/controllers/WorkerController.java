@@ -18,7 +18,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("public/worker")
-@Tags(value = {@Tag(name = "Public | Worker"), @Tag(name = "operationIdNamePublicWorker")})
+@Tags(value = @Tag(name = "Public | Worker"))
 public class WorkerController {
 
     private final WorkerService service;

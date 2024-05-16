@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.example.egardenrestapi.subscriptions.entities.SubscriptionEntity;
 
 public interface SubscriptionRepository extends JpaRepository<SubscriptionEntity, Integer>{
-	SubscriptionEntity findByUserId(Integer userId);
+	SubscriptionEntity findByUserEntityId(Integer userId);
 	void deleteById(Integer id);
 }

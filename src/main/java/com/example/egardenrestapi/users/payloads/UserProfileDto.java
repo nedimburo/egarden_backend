@@ -19,5 +19,4 @@ public class UserProfileDto {
 	private String username;
 	private String gender;
 	private LocalDate birthDate;
-	private boolean hasCard;
 }

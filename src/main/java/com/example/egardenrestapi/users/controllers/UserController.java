@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("public/user")
-@Tags(value = {@Tag(name = "Public | User"), @Tag(name = "operationIdNamePublicUser")})
+@Tags(value = @Tag(name = "Public | User"))
 public class UserController {
 
     private final UserService service;

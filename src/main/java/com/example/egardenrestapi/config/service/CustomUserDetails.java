@@ -18,7 +18,7 @@ public class CustomUserDetails implements UserDetails{
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return List.of(()-> userEntity.getRole());
+		return List.of(()-> String.valueOf(userEntity.getRole()));
 	}
 	
 	public String getEmail() {
