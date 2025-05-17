@@ -33,3 +33,6 @@ build/
 .vscode/
 
 application-local.properties
+liquibase-local.properties
+.env
+firebase.json
