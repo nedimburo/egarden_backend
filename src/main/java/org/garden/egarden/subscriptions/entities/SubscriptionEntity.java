@@ -1,6 +1,6 @@
 package org.garden.egarden.subscriptions.entities;
 
-import org.garden.egarden.subscriptions.Subscription;
+import org.garden.egarden.common.entities.Auditable;
 import org.garden.egarden.accessibility.users.entities.UserEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -12,7 +12,7 @@ import lombok.ToString;
 @Entity
 @Table(name="subscriptions")
 @ToString(onlyExplicitlyIncluded = true, callSuper = true)
-public class SubscriptionEntity implements Subscription {
+public class SubscriptionEntity extends Auditable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

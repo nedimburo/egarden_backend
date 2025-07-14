@@ -1,7 +1,7 @@
 package org.garden.egarden.workers.entities;
 
 import org.garden.egarden.accessibility.users.entities.UserEntity;
-import org.garden.egarden.workers.Worker;
+import org.garden.egarden.common.entities.Auditable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -15,30 +15,35 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @Entity
-@Table(name="workers")
+@Table(name = "workers")
 @ToString(onlyExplicitlyIncluded = true, callSuper = true)
-public class WorkerEntity implements Worker {
+public class WorkerEntity extends Auditable {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer id;
 
-	@Column(name = "description")
+	@Column(name = "description", nullable = false, columnDefinition = "TEXT")
 	private String description;
 
 	@Column(name = "phone_number", unique = true)
 	private String phoneNumber;
 
-	@Column(name = "city")
+	@Column(name = "city", nullable = false)
 	private String city;
 
-	@Column(name = "country")
+	@Column(name = "country", nullable = false)
 	private String country;
 
-	@OneToOne(fetch=FetchType.LAZY)
+	@Column(name = "hourly_rate")
+	private BigDecimal hourlyRate;
+
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="user_id")
 	private UserEntity userEntity;
 

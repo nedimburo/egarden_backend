@@ -106,13 +106,13 @@ public class OpenApiConfig {
 
     private String getSummary(List<String> tags) {
         var first = tags.stream().map(String::toLowerCase).filter(item -> item.startsWith("common") ||
-                item.startsWith("admin") || item.startsWith("client")).findFirst();
+                item.startsWith("admin") || item.startsWith("client") || item.startsWith("worker")).findFirst();
         if (first.isPresent()) {
             var name = first.get();
             if (name.toLowerCase().startsWith("common")) {
                 return "Required bearer token with any role or token without roles.";
             }
-            for (String role : List.of("admin", "client")) {
+            for (String role : List.of("admin", "client", "worker")) {
                 if (name.toLowerCase().startsWith(role)) {
                     return format("Required bearer token with %s role.", role);
                 }

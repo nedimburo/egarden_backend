@@ -1,6 +1,5 @@
 package org.garden.egarden.requests.services;
 
-import org.garden.egarden.requests.Request;
 import org.garden.egarden.requests.entities.*;
 import org.garden.egarden.requests.payloads.RequestDto;
 import org.garden.egarden.requests.payloads.RequestResponseDto;
@@ -24,7 +23,7 @@ import java.util.List;
 @Getter
 @Service
 @RequiredArgsConstructor
-public class RequestService implements Request {
+public class RequestService {
 
     private final RequestRepository repository;
     private final UserService userService;

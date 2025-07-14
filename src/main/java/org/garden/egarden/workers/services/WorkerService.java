@@ -2,7 +2,6 @@ package org.garden.egarden.workers.services;
 
 import org.garden.egarden.accessibility.users.entities.UserEntity;
 import org.garden.egarden.accessibility.users.services.UserService;
-import org.garden.egarden.workers.Worker;
 import org.garden.egarden.workers.entities.WorkerEntity;
 import org.garden.egarden.workers.payloads.AddWorkerDto;
 import org.garden.egarden.workers.payloads.WorkerResponseDto;
@@ -22,7 +21,7 @@ import java.util.List;
 @Getter
 @Service
 @RequiredArgsConstructor
-public class WorkerService implements Worker {
+public class WorkerService {
 
     private final WorkerRepository repository;
     private final UserService userService;

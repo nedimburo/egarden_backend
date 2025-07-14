@@ -1,8 +1,7 @@
 package org.garden.egarden.requests.entities;
 
-import java.time.LocalDate;
 
-import org.garden.egarden.requests.Request;
+import org.garden.egarden.common.entities.Auditable;
 import org.garden.egarden.accessibility.users.entities.UserEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -14,7 +13,7 @@ import lombok.ToString;
 @Entity
 @Table(name="requests")
 @ToString(onlyExplicitlyIncluded = true, callSuper = true)
-public class RequestEntity implements Request {
+public class RequestEntity extends Auditable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -47,9 +46,6 @@ public class RequestEntity implements Request {
 	@Column(name = "status")
 	@Enumerated(EnumType.STRING)
 	private StatusType status;
-
-	@Column(name = "creation_date")
-	private LocalDate creationDate;
 
 	@Column(name = "city")
 	private String city;

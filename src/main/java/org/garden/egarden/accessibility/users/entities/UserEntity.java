@@ -12,7 +12,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @Entity
-@Table(name="users")
+@Table(name = "users")
 @ToString(onlyExplicitlyIncluded = true, callSuper = true)
 public class UserEntity extends Auditable {
 
@@ -20,22 +20,23 @@ public class UserEntity extends Auditable {
 	@Column(name = "id", nullable = false, updatable = false)
 	private String id;
 
-	@Column(name = "first_name")
+	@Column(name = "first_name", nullable = false)
 	private String firstName;
 
-	@Column(name = "last_name")
+	@Column(name = "last_name", nullable = false)
 	private String lastName;
 
-	@Column(name = "email", unique = true)
+	@Column(name = "email", nullable = false, unique = true)
 	private String email;
 
-	@Column(name = "username", unique = true)
+	@Column(name = "username", nullable = false, unique = true)
 	private String username;
 
-	@Column(name = "gender")
-	private String gender;
+	@Column(name = "gender", nullable = false)
+	@Enumerated(EnumType.STRING)
+	private UserGender gender;
 
-	@Column(name = "birth_date")
+	@Column(name = "birth_date", nullable = false)
 	private LocalDate birthDate;
 
 	@ManyToOne(fetch = FetchType.LAZY)

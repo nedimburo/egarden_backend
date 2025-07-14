@@ -45,6 +45,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/common/**").authenticated()
                         .requestMatchers("/client/**").hasAuthority(RoleName.CLIENT.name())
                         .requestMatchers("/admin/**").hasAuthority(RoleName.ADMIN.name())
+                        .requestMatchers("/worker/**").hasAuthority(RoleName.WORKER.name())
                         .anyRequest().permitAll()
                 )
                 .addFilterBefore(firebaseJwtFilter, UsernamePasswordAuthenticationFilter.class);
