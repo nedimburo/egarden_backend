@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.UUID;
+
 @Getter
 @Setter
 @Entity
@@ -15,8 +17,9 @@ import lombok.ToString;
 public class SubscriptionEntity extends Auditable {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+	@GeneratedValue
+	@Column(columnDefinition = "uuid", updatable = false, nullable = false)
+	private UUID id;
 
 	@Column(name = "subscription_type")
 	@Enumerated(EnumType.STRING)

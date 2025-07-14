@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.UUID;
+
 @Getter
 @Setter
 @Entity
@@ -16,8 +18,9 @@ import lombok.ToString;
 public class RequestEntity extends Auditable {
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private Integer id;
+	@GeneratedValue
+	@Column(columnDefinition = "uuid", updatable = false, nullable = false)
+	private UUID id;
 
 	@Column(name = "chosen_maintenance")
 	@Enumerated(EnumType.STRING)

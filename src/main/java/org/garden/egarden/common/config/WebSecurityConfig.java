@@ -20,6 +20,8 @@ public class WebSecurityConfig {
 
     private final CorsConfig corsConfig;
     private final FirebaseJwtFilter firebaseJwtFilter;
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
@@ -47,6 +49,10 @@ public class WebSecurityConfig {
                         .requestMatchers("/admin/**").hasAuthority(RoleName.ADMIN.name())
                         .requestMatchers("/worker/**").hasAuthority(RoleName.WORKER.name())
                         .anyRequest().permitAll()
+                )
+                .exceptionHandling(exception -> exception
+                        .accessDeniedHandler(customAccessDeniedHandler)
+                        .authenticationEntryPoint(customAuthenticationEntryPoint)
                 )
                 .addFilterBefore(firebaseJwtFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

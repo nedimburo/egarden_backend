@@ -16,6 +16,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -23,10 +24,11 @@ import java.math.BigDecimal;
 @Table(name = "workers")
 @ToString(onlyExplicitlyIncluded = true, callSuper = true)
 public class WorkerEntity extends Auditable {
-	
+
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private Integer id;
+	@GeneratedValue
+	@Column(columnDefinition = "uuid", updatable = false, nullable = false)
+	private UUID id;
 
 	@Column(name = "description", nullable = false, columnDefinition = "TEXT")
 	private String description;
