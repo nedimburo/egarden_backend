@@ -1,22 +1,28 @@
 package org.garden.egarden.accessibility.users.services;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.FirebaseToken;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 import org.garden.egarden.accessibility.roles.entities.RoleEntity;
 import org.garden.egarden.accessibility.roles.entities.RoleName;
+import org.garden.egarden.accessibility.roles.services.RoleService;
 import org.garden.egarden.accessibility.users.entities.UserEntity;
-import org.garden.egarden.accessibility.users.payloads.LoginDto;
-import org.garden.egarden.accessibility.users.payloads.LoginResponseDto;
-import org.garden.egarden.accessibility.users.payloads.RegisterDto;
-import org.garden.egarden.accessibility.users.payloads.UserProfileDto;
+import org.garden.egarden.accessibility.users.mappers.UserMapper;
+import org.garden.egarden.accessibility.users.payloads.*;
 import org.garden.egarden.accessibility.users.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.garden.egarden.exceptions.BadRequestException;
+import org.garden.egarden.exceptions.ResourceAlreadyExistsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
+
+import static org.garden.egarden.accessibility.roles.entities.RoleName.CLIENT;
 
 @Slf4j
 @Getter
@@ -25,6 +31,8 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserRepository repository;
+    private final RoleService roleService;
+    private final UserMapper userMapper;
 
     @Transactional
     public RoleName getUserRoleById(String id){
@@ -34,46 +42,38 @@ public class UserService {
     }
 
     @Transactional
-    public ResponseEntity<LoginResponseDto> authenticateUser(LoginDto loginDto){
-        LoginResponseDto responseDto = new LoginResponseDto();
+    public RegistrationResponseDto register(HttpServletRequest request, RegistrationRequestDto registrationRequest) throws Exception {
+        String tokenHeader = request.getHeader("Authorization");
+        if (tokenHeader == null || !tokenHeader.startsWith("Bearer ")) {
+            throw new BadRequestException("Token header missing or not properly formatted.");
+        }
+
+        String token = tokenHeader.substring(7);
         try {
-            UserEntity userEntity = repository.findByUsernameOrEmail(loginDto.getEmail(), loginDto.getEmail());
-            responseDto.setMessage("User login successfully.");
-            responseDto.setUsername(userEntity.getUsername());
-            responseDto.setRole(String.valueOf(userEntity.getRole()));
+            FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
+            String userId = decodedToken.getUid();
 
-            return new ResponseEntity<>(responseDto, HttpStatus.OK);
-        }catch(BadCredentialsException e) {
-            responseDto.setMessage("Invalid email or password");
-            return new ResponseEntity<>(responseDto, HttpStatus.UNAUTHORIZED);
+            if (repository.existsById(userId)) {
+                throw new ResourceAlreadyExistsException("User profile with ID: " + userId + " already exists.");
+            }
+
+            UserEntity newUser = new UserEntity();
+            newUser.setId(userId);
+            newUser.setEmail(decodedToken.getEmail());
+            newUser.setUsername(registrationRequest.getUsername());
+            newUser.setFirstName(registrationRequest.getFirstName());
+            newUser.setLastName(registrationRequest.getLastName());
+            newUser.setGender(registrationRequest.getGender());
+            newUser.setBirthDate(registrationRequest.getBirthDate());
+            newUser.setRole(roleService.findByName(CLIENT));
+            UserEntity savedUser = repository.save(newUser);
+
+            RegistrationResponseDto response = userMapper.toRegistrationDto(savedUser);
+            response.setMessage("User has been successfully registered.");
+            return response;
+        } catch (FirebaseAuthException e) {
+            throw new Exception("Invalid or expired token: " + e.getMessage());
         }
-    }
-
-    @Transactional
-    public ResponseEntity<?> registerUser(RegisterDto registerDto){
-        if (repository.existsByUsername(registerDto.getUsername())) {
-            return new ResponseEntity<>("Username is already in use.", HttpStatus.BAD_REQUEST);
-        }
-
-        if (repository.existsByEmail(registerDto.getEmail())) {
-            return new ResponseEntity<>("Email is already in use.", HttpStatus.BAD_REQUEST);
-        }
-
-        String rawPassword = registerDto.getPassword();
-        if (rawPassword == null || rawPassword.isEmpty()) {
-            return new ResponseEntity<>("Password cannot be null or empty.", HttpStatus.BAD_REQUEST);
-        }
-
-        UserEntity userEntity =new UserEntity();
-        userEntity.setFirstName(registerDto.getFirstName());
-        userEntity.setLastName(registerDto.getLastName());
-        userEntity.setEmail(registerDto.getEmail());
-        userEntity.setUsername(registerDto.getUsername());
-        userEntity.setGender(registerDto.getGender());
-        userEntity.setBirthDate(registerDto.getBirthDate());
-
-        repository.save(userEntity);
-        return new ResponseEntity<>("User is registered successfully!", HttpStatus.OK);
     }
 
     @Transactional
