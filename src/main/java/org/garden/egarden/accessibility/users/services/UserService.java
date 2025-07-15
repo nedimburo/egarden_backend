@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserRepository repository;
+
     @Transactional
     public RoleName getUserRoleById(String id){
         UserEntity user = getUser(id);
@@ -99,7 +100,4 @@ public class UserService {
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
     }
 
-    public Boolean doesUserExist(String userId) {
-        return repository.existsById(userId);
-    }
 }

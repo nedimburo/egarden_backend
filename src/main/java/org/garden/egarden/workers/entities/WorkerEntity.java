@@ -1,21 +1,16 @@
 package org.garden.egarden.workers.entities;
 
+import jakarta.persistence.*;
 import org.garden.egarden.accessibility.users.entities.UserEntity;
+import org.garden.egarden.certifications.entities.CertificationEntity;
 import org.garden.egarden.common.entities.Auditable;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.garden.egarden.tags.entities.TagEntity;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -42,11 +37,26 @@ public class WorkerEntity extends Auditable {
 	@Column(name = "country", nullable = false)
 	private String country;
 
-	@Column(name = "hourly_rate")
-	private BigDecimal hourlyRate;
+	@Column(name = "hourly_rate", nullable = false)
+	private BigDecimal hourlyRate = BigDecimal.ZERO;
 
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="user_id")
 	private UserEntity userEntity;
 
+	@ManyToMany
+	@JoinTable(
+			name = "worker_tags",
+			joinColumns = @JoinColumn(name = "worker_id"),
+			inverseJoinColumns = @JoinColumn(name = "tag_id")
+	)
+	private List<TagEntity> tags;
+
+	@ManyToMany
+	@JoinTable(
+			name = "worker_certifications",
+			joinColumns = @JoinColumn(name = "worker_id"),
+			inverseJoinColumns = @JoinColumn(name = "certification_id")
+	)
+	private List<CertificationEntity> certifications;
 }
