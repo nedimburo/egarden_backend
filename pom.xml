@@ -36,7 +36,7 @@
 		<validation.version>3.1.1</validation.version>
 		<firebase.version>9.4.3</firebase.version>
 		<lombok.version>1.18.36</lombok.version>
-		<springdoc.version>2.6.0</springdoc.version>
+		<springdoc.version>2.4.0</springdoc.version>
 		<maven-compiler.version>3.14.0</maven-compiler.version>
 		<mapstruct.version>1.6.3</mapstruct.version>
 		<lombok-mapstruct.version>0.2.0</lombok-mapstruct.version>

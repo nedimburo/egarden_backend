@@ -1,6 +1,5 @@
 package org.garden.egarden.subscriptions.services;
 
-import org.garden.egarden.subscriptions.Subscription;
 import org.garden.egarden.subscriptions.entities.SubscriptionEntity;
 import org.garden.egarden.subscriptions.entities.SubscriptionType;
 import org.garden.egarden.subscriptions.payloads.AddSubscriptionDto;
@@ -19,7 +18,7 @@ import org.springframework.stereotype.Service;
 @Getter
 @Service
 @RequiredArgsConstructor
-public class SubscriptionService implements Subscription {
+public class SubscriptionService {
 
     private final SubscriptionRepository repository;
     private final UserService userService;
