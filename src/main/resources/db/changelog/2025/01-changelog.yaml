@@ -1,1 +1,434 @@
-databaseChangeLog: []
+databaseChangeLog:
+- changeSet:
+    id: 1752695258379-1
+    author: nedim.buro (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: cetificationsPK
+            name: id
+            type: UUID
+        - column:
+            constraints:
+              nullable: false
+            name: created
+            type: TIMESTAMP(6) WITHOUT TIME ZONE
+        - column:
+            constraints:
+              nullable: false
+            name: updated
+            type: TIMESTAMP(6) WITHOUT TIME ZONE
+        - column:
+            constraints:
+              nullable: false
+            name: acquired_at_ms
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: acquired_from
+            type: VARCHAR(500)
+        - column:
+            constraints:
+              nullable: false
+            name: description
+            type: TEXT
+        - column:
+            constraints:
+              nullable: false
+            name: title
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: valid_until_ms
+            type: BIGINT
+        tableName: cetifications
+- changeSet:
+    id: 1752695258379-2
+    author: nedim.buro (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: rolesPK
+            name: id
+            type: UUID
+        - column:
+            constraints:
+              nullable: false
+            name: created
+            type: TIMESTAMP(6) WITHOUT TIME ZONE
+        - column:
+            constraints:
+              nullable: false
+            name: updated
+            type: TIMESTAMP(6) WITHOUT TIME ZONE
+        - column:
+            name: name
+            type: VARCHAR(255)
+        tableName: roles
+- changeSet:
+    id: 1752695258379-3
+    author: nedim.buro (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: subscriptionsPK
+            name: id
+            type: UUID
+        - column:
+            constraints:
+              nullable: false
+            name: created
+            type: TIMESTAMP(6) WITHOUT TIME ZONE
+        - column:
+            constraints:
+              nullable: false
+            name: updated
+            type: TIMESTAMP(6) WITHOUT TIME ZONE
+        - column:
+            name: cancellation_at_ms
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: expiration_at_ms
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: purchased_at_ms
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: subscription_status
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: subscription_type
+            type: VARCHAR(255)
+        - column:
+            name: user_id
+            type: VARCHAR(255)
+        tableName: subscriptions
+- changeSet:
+    id: 1752695258379-4
+    author: nedim.buro (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: tagsPK
+            name: id
+            type: UUID
+        - column:
+            constraints:
+              nullable: false
+            name: created
+            type: TIMESTAMP(6) WITHOUT TIME ZONE
+        - column:
+            constraints:
+              nullable: false
+            name: updated
+            type: TIMESTAMP(6) WITHOUT TIME ZONE
+        - column:
+            constraints:
+              nullable: false
+            name: description
+            type: VARCHAR(1000)
+        - column:
+            constraints:
+              nullable: false
+            name: name
+            type: VARCHAR(255)
+        tableName: tags
+- changeSet:
+    id: 1752695258379-5
+    author: nedim.buro (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: usersPK
+            name: id
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: created
+            type: TIMESTAMP(6) WITHOUT TIME ZONE
+        - column:
+            constraints:
+              nullable: false
+            name: updated
+            type: TIMESTAMP(6) WITHOUT TIME ZONE
+        - column:
+            constraints:
+              nullable: false
+            name: birth_date
+            type: date
+        - column:
+            constraints:
+              nullable: false
+            name: email
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: first_name
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: gender
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: last_name
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: username
+            type: VARCHAR(255)
+        - column:
+            name: role_id
+            type: UUID
+        tableName: users
+- changeSet:
+    id: 1752695258379-6
+    author: nedim.buro (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: worker_id
+            type: UUID
+        - column:
+            constraints:
+              nullable: false
+            name: certification_id
+            type: UUID
+        tableName: worker_certifications
+- changeSet:
+    id: 1752695258379-7
+    author: nedim.buro (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: worker_id
+            type: UUID
+        - column:
+            constraints:
+              nullable: false
+            name: tag_id
+            type: UUID
+        tableName: worker_tags
+- changeSet:
+    id: 1752695258379-8
+    author: nedim.buro (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: workersPK
+            name: id
+            type: UUID
+        - column:
+            constraints:
+              nullable: false
+            name: created
+            type: TIMESTAMP(6) WITHOUT TIME ZONE
+        - column:
+            constraints:
+              nullable: false
+            name: updated
+            type: TIMESTAMP(6) WITHOUT TIME ZONE
+        - column:
+            constraints:
+              nullable: false
+            name: city
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: country
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: description
+            type: TEXT
+        - column:
+            constraints:
+              nullable: false
+            name: hourly_rate
+            type: numeric(38, 2)
+        - column:
+            name: phone_number
+            type: VARCHAR(255)
+        - column:
+            name: user_id
+            type: VARCHAR(255)
+        tableName: workers
+- changeSet:
+    id: 1752695258379-9
+    author: nedim.buro (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: user_id
+        constraintName: UC_SUBSCRIPTIONSUSER_ID_COL
+        tableName: subscriptions
+- changeSet:
+    id: 1752695258379-10
+    author: nedim.buro (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: email
+        constraintName: UC_USERSEMAIL_COL
+        tableName: users
+- changeSet:
+    id: 1752695258379-11
+    author: nedim.buro (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: username
+        constraintName: UC_USERSUSERNAME_COL
+        tableName: users
+- changeSet:
+    id: 1752695258379-12
+    author: nedim.buro (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: phone_number
+        constraintName: UC_WORKERSPHONE_NUMBER_COL
+        tableName: workers
+- changeSet:
+    id: 1752695258379-13
+    author: nedim.buro (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: user_id
+        constraintName: UC_WORKERSUSER_ID_COL
+        tableName: workers
+- changeSet:
+    id: 1752695258379-14
+    author: nedim.buro (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: worker_id
+        baseTableName: worker_tags
+        constraintName: FK8pnbqgm9yhtqd5e35lqxwah7w
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: workers
+        validate: true
+- changeSet:
+    id: 1752695258379-15
+    author: nedim.buro (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: tag_id
+        baseTableName: worker_tags
+        constraintName: FK9bg7085a6blotcjkbpc3mebwk
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: tags
+        validate: true
+- changeSet:
+    id: 1752695258379-16
+    author: nedim.buro (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: user_id
+        baseTableName: subscriptions
+        constraintName: FKhro52ohfqfbay9774bev0qinr
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: users
+        validate: true
+- changeSet:
+    id: 1752695258379-17
+    author: nedim.buro (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: certification_id
+        baseTableName: worker_certifications
+        constraintName: FKjvmdhi9p2roge9n4gswt42v0
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: cetifications
+        validate: true
+- changeSet:
+    id: 1752695258379-18
+    author: nedim.buro (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: role_id
+        baseTableName: users
+        constraintName: FKp56c1712k691lhsyewcssf40f
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: roles
+        validate: true
+- changeSet:
+    id: 1752695258379-19
+    author: nedim.buro (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: worker_id
+        baseTableName: worker_certifications
+        constraintName: FKs75ew5lu1nwwf4a3jdvpqsphb
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: workers
+        validate: true
+- changeSet:
+    id: 1752695258379-20
+    author: nedim.buro (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: user_id
+        baseTableName: workers
+        constraintName: FKt09tks6703k4e3idha0k7jtwm
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: users
+        validate: true
+

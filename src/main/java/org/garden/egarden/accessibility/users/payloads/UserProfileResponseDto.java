@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.garden.egarden.accessibility.roles.entities.RoleName;
+import org.garden.egarden.accessibility.users.entities.UserGender;
 
 import java.time.LocalDate;
 
@@ -11,12 +13,14 @@ import java.time.LocalDate;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserProfileDto {
-
-	private String firstName;
-	private String lastName;
+public class UserProfileResponseDto {
+	private String userId;
 	private String email;
 	private String username;
-	private String gender;
+	private String firstName;
+	private String lastName;
+	private RoleName role;
+	private UserGender gender;
 	private LocalDate birthDate;
+	private String registrationDate;
 }

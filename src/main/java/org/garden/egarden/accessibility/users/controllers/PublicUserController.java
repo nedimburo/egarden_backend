@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +32,7 @@ public class PublicUserController {
             description = "Register new user by providing Firebase bearer token alongside the registration form data."
     )
     @PostMapping("/register")
-    public RegistrationResponseDto register(HttpServletRequest request, @RequestBody @Valid RegistrationRequestDto registrationRequest) throws Exception {
+    public RegistrationResponseDto register(HttpServletRequest request, @RequestBody RegistrationRequestDto registrationRequest) throws Exception {
         return service.register(request, registrationRequest);
     }
 }

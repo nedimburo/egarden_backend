@@ -16,10 +16,11 @@ import jakarta.transaction.Transactional;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.garden.egarden.common.config.Auth;
 import org.garden.egarden.exceptions.BadRequestException;
 import org.garden.egarden.exceptions.ResourceAlreadyExistsException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.garden.egarden.exceptions.ResourceNotFoundException;
+import org.garden.egarden.exceptions.UnauthorizedException;
 import org.springframework.stereotype.Service;
 
 import static org.garden.egarden.accessibility.roles.entities.RoleName.CLIENT;
@@ -77,18 +78,26 @@ public class UserService {
     }
 
     @Transactional
-    public ResponseEntity<UserProfileDto> getUsersProfile(String username){
-        UserEntity userEntity = repository.findByUsernameOrEmail(username, username);
+    public UserProfileResponseDto getUsersProfile() {
+        String uid;
+        try {
+            uid = Auth.getUserId();
+        } catch (Exception e) {
+            throw new UnauthorizedException(e.getMessage());
+        }
 
-        UserProfileDto userProfileDto=new UserProfileDto();
-        userProfileDto.setFirstName(userEntity.getFirstName());
-        userProfileDto.setLastName(userEntity.getLastName());
-        userProfileDto.setEmail(userEntity.getEmail());
-        userProfileDto.setUsername(userEntity.getUsername());
-        userProfileDto.setGender(userEntity.getGender());
-        userProfileDto.setBirthDate(userEntity.getBirthDate());
+        UserEntity user;
+        try {
+            user = getUser(uid);
+        } catch (EntityNotFoundException e) {
+            throw new ResourceNotFoundException("User with ID: " + uid + " doesn't exist");
+        }
 
-        return new ResponseEntity<>(userProfileDto, HttpStatus.OK);
+        try {
+            return userMapper.toUserProfileDto(user);
+        } catch (Exception e) {
+            throw new RuntimeException("Error while getting user profile data: " + e.getMessage());
+        }
     }
 
     public UserEntity findByUsernameOrEmail(String username, String email){
