@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tags;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.garden.egarden.common.payloads.SuccessResponseDto;
 import org.garden.egarden.reviews.payloads.ReviewRequestDto;
 import org.garden.egarden.reviews.payloads.ReviewResponseDto;
 import org.garden.egarden.reviews.services.ReviewService;
@@ -29,8 +30,27 @@ public class ClientReviewController {
     @PostMapping("/")
     public ReviewResponseDto createReview(
             @RequestBody ReviewRequestDto reviewRequestDto,
-            @RequestParam String workerId
+            @RequestParam(required = false) String workerId
     ) {
         return service.createReview(reviewRequestDto, workerId);
+    }
+
+    @Operation(
+            description = "Update an existing review."
+    )
+    @PatchMapping("/")
+    public ReviewResponseDto updateReview(
+            @RequestBody ReviewRequestDto reviewRequestDto,
+            @RequestParam String reviewId
+    ) {
+        return service.updateReview(reviewRequestDto, reviewId);
+    }
+
+    @Operation(
+            description = "Delete an existing review."
+    )
+    @DeleteMapping("/")
+    public SuccessResponseDto deleteReview(@RequestParam String reviewId) {
+        return service.deleteReview(reviewId);
     }
 }

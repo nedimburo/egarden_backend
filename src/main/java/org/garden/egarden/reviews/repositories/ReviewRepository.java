@@ -9,6 +9,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface ReviewRepository extends JpaRepository<ReviewEntity, UUID> {
-    Optional<ReviewEntity> findByUserAndAppReviewTrue(UserEntity user);
+    Optional<ReviewEntity> findByUserAndIsAppReviewTrue(UserEntity user);
     Optional<ReviewEntity> findByUserAndWorker(UserEntity user, WorkerEntity worker);
 }

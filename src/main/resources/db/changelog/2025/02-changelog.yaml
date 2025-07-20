@@ -1,0 +1,91 @@
+databaseChangeLog:
+- changeSet:
+    id: 1753008257331-1
+    author: nedim.buro (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: reviewsPK
+            name: id
+            type: UUID
+        - column:
+            constraints:
+              nullable: false
+            name: created
+            type: TIMESTAMP(6) WITHOUT TIME ZONE
+        - column:
+            constraints:
+              nullable: false
+            name: updated
+            type: TIMESTAMP(6) WITHOUT TIME ZONE
+        - column:
+            constraints:
+              nullable: false
+            name: comment
+            type: VARCHAR(1500)
+        - column:
+            constraints:
+              nullable: false
+            name: is_app_review
+            type: BOOLEAN
+        - column:
+            constraints:
+              nullable: false
+            name: rating
+            type: INTEGER
+        - column:
+            constraints:
+              nullable: false
+            name: user_id
+            type: VARCHAR(255)
+        - column:
+            name: worker_id
+            type: UUID
+        tableName: reviews
+- changeSet:
+    id: 1753008257331-2
+    author: nedim.buro (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: user_id, is_app_review
+        constraintName: UK1e1ot2pra3sldpg3bqrxsg55w
+        tableName: reviews
+- changeSet:
+    id: 1753008257331-3
+    author: nedim.buro (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: user_id, worker_id
+        constraintName: UKhwm6864nxmfpwo4jgpqt3oui2
+        tableName: reviews
+- changeSet:
+    id: 1753008257331-4
+    author: nedim.buro (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: worker_id
+        baseTableName: reviews
+        constraintName: FKamwdegublmwxug52stgsxayeq
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: workers
+        validate: true
+- changeSet:
+    id: 1753008257331-5
+    author: nedim.buro (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: user_id
+        baseTableName: reviews
+        constraintName: FKcgy7qjc1r99dp117y9en6lxye
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: users
+        validate: true
+
