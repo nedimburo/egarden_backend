@@ -1,5 +1,6 @@
 package org.garden.egarden.workers.services;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.garden.egarden.accessibility.users.entities.UserEntity;
 import org.garden.egarden.accessibility.users.services.UserService;
 import org.garden.egarden.workers.entities.WorkerEntity;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Getter
@@ -89,5 +91,10 @@ public class WorkerService {
         }
 
         return new ResponseEntity<>(allWorkersResponse, HttpStatus.OK);
+    }
+
+    public WorkerEntity getWorker(UUID workerId) {
+        return repository.findById(workerId)
+                .orElseThrow(() -> new EntityNotFoundException("Worker not found with ID " + workerId));
     }
 }

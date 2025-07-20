@@ -17,10 +17,10 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.garden.egarden.common.config.Auth;
-import org.garden.egarden.exceptions.BadRequestException;
-import org.garden.egarden.exceptions.ResourceAlreadyExistsException;
-import org.garden.egarden.exceptions.ResourceNotFoundException;
-import org.garden.egarden.exceptions.UnauthorizedException;
+import org.garden.egarden.common.exceptions.BadRequestException;
+import org.garden.egarden.common.exceptions.ResourceAlreadyExistsException;
+import org.garden.egarden.common.exceptions.ResourceNotFoundException;
+import org.garden.egarden.common.exceptions.UnauthorizedException;
 import org.springframework.stereotype.Service;
 
 import static org.garden.egarden.accessibility.roles.entities.RoleName.CLIENT;
@@ -106,7 +106,7 @@ public class UserService {
 
     public UserEntity getUser(String userId) {
         return repository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
+                .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
     }
 
 }
