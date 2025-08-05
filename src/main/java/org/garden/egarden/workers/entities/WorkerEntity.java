@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.garden.egarden.tags.entities.TagEntity;
+import org.garden.egarden.worker_reviews.entities.WorkerReviewEntity;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -40,6 +41,10 @@ public class WorkerEntity extends Auditable {
 	@Column(name = "hourly_rate", nullable = false)
 	private BigDecimal hourlyRate = BigDecimal.ZERO;
 
+	@Column(name = "status", nullable = false)
+	@Enumerated(EnumType.STRING)
+	private WorkerStatus status;
+
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="user_id")
 	private UserEntity userEntity;
@@ -59,4 +64,7 @@ public class WorkerEntity extends Auditable {
 			inverseJoinColumns = @JoinColumn(name = "certification_id")
 	)
 	private List<CertificationEntity> certifications;
+
+	@OneToMany(mappedBy = "worker", cascade = CascadeType.ALL)
+	private List<WorkerReviewEntity> reviews;
 }
